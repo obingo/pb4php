@@ -1,11 +1,10 @@
 <?php
 /**
- * Varint type
  * @author Nikolai Kordulla
  */
-class PBInt extends PBScalar
+class PB32Bit extends PBScalar
 {
-	var $wired_type = PBMessage::WIRED_VARINT;
+	protected $wired_type = PBMessage::WIRED_32BIT;
 
 	/**
 	 * Parses the message for this type
@@ -13,8 +12,13 @@ class PBInt extends PBScalar
 	 * @param array
 	 */
 	public function ParseFromArray()
-	{
-		$this->value = $this->reader->next();
+	{					
+		$pointer = $this->reader->get_pointer();
+		$this->reader->add_pointer(4);
+		$str = $this->reader->get_message_from($pointer);
+		
+		$p = unpack("f", $str);
+		$this->value = $p[1];  		
 		
 		$this->clean();
 	}
@@ -32,18 +36,19 @@ class PBInt extends PBScalar
 			$string .= $this->base128->set_value($rec << 3 | $this->wired_type);
 		}
 
-		$value = $this->base128->set_value($this->value);
+		//$value = $this->base128->set_value($this->value);
+		$value = pack("f", $this->value);
 		$string .= $value;
 
 		return $string;
 	}
 	
-	public function toJson($fieldName = "")
+public function toJson($fieldName = "")
 	{		
 		if ($fieldName == "")
-			return  (int)$this->value;
+			return  $this->value;
 		else
-			return  '"' . $fieldName . '":' . (int)$this->value;
+			return  '"' . $fieldName . '":' . $this->value;
 	}
 }
 ?>

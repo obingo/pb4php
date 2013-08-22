@@ -5,7 +5,8 @@
 class PBEnum extends PBScalar
 {
 	var $wired_type = PBMessage::WIRED_VARINT;
-
+	protected $names = array();
+	
 	/**
 	 * Parses the message for this type
 	 *
@@ -14,6 +15,8 @@ class PBEnum extends PBScalar
 	public function ParseFromArray()
 	{
 		$this->value = $this->reader->next();
+		
+		$this->clean();
 	}
 
 	/**
@@ -32,6 +35,14 @@ class PBEnum extends PBScalar
 		$string .= $value;
 
 		return $string;
+	}
+	
+	public function get_description()
+	{
+		if (isset($this->names[$this->value]))
+			return $this->names[$this->value];
+		
+		return "";
 	}
 }
 ?>

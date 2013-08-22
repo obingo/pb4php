@@ -4,6 +4,15 @@ class Person_PhoneType extends PBEnum
   const MOBILE  = 0;
   const HOME  = 1;
   const WORK  = 2;
+
+  public function __construct($reader=null)
+  {
+   	parent::__construct($reader);
+ 	$this->names = array(
+			0 => "MOBILE",
+			1 => "HOME",
+			2 => "WORK");
+   }
 }
 class Person_PhoneNumber extends PBMessage
 {
@@ -11,12 +20,14 @@ class Person_PhoneNumber extends PBMessage
   public function __construct($reader=null)
   {
     parent::__construct($reader);
-    $this->fields["1"] = "PBString";
+    self::$fields["Person_PhoneNumber"]["1"] = "PBString";
     $this->values["1"] = "";
-    $this->fields["2"] = "Person_PhoneType";
+    self::$fieldNames["Person_PhoneNumber"]["1"] = "number";
+    self::$fields["Person_PhoneNumber"]["2"] = "Person_PhoneType";
     $this->values["2"] = "";
     $this->values["2"] = new Person_PhoneType();
     $this->values["2"]->value = Person_PhoneType::HOME;
+    self::$fieldNames["Person_PhoneNumber"]["2"] = "type";
   }
   function number()
   {
@@ -34,6 +45,10 @@ class Person_PhoneNumber extends PBMessage
   {
     return $this->_set_value("2", $value);
   }
+  function type_string()
+  {
+    return $this->values["2"]->get_description();
+  }
 }
 class Person extends PBMessage
 {
@@ -41,16 +56,21 @@ class Person extends PBMessage
   public function __construct($reader=null)
   {
     parent::__construct($reader);
-    $this->fields["1"] = "PBString";
+    self::$fields["Person"]["1"] = "PBString";
     $this->values["1"] = "";
-    $this->fields["2"] = "PBInt";
+    self::$fieldNames["Person"]["1"] = "name";
+    self::$fields["Person"]["2"] = "PBInt";
     $this->values["2"] = "";
-    $this->fields["3"] = "PBString";
+    self::$fieldNames["Person"]["2"] = "id";
+    self::$fields["Person"]["3"] = "PBString";
     $this->values["3"] = "";
-    $this->fields["4"] = "Person_PhoneNumber";
+    self::$fieldNames["Person"]["3"] = "email";
+    self::$fields["Person"]["4"] = "Person_PhoneNumber";
     $this->values["4"] = array();
-    $this->fields["5"] = "PBString";
+    self::$fieldNames["Person"]["4"] = "phone";
+    self::$fields["Person"]["5"] = "PBString";
     $this->values["5"] = "";
+    self::$fieldNames["Person"]["5"] = "surname";
   }
   function name()
   {
@@ -88,13 +108,21 @@ class Person extends PBMessage
   {
     $this->_set_arr_value("4", $index, $value);
   }
+  function set_all_phones($values)
+  {
+    return $this->_set_arr_values("4", $values);
+  }
   function remove_last_phone()
   {
     $this->_remove_last_arr_value("4");
   }
-  function phone_size()
+  function phones_size()
   {
     return $this->_get_arr_size("4");
+  }
+  function get_phones()
+  {
+    return $this->_get_value("4");
   }
   function surname()
   {
@@ -111,8 +139,9 @@ class AddressBook extends PBMessage
   public function __construct($reader=null)
   {
     parent::__construct($reader);
-    $this->fields["1"] = "Person";
+    self::$fields["AddressBook"]["1"] = "Person";
     $this->values["1"] = array();
+    self::$fieldNames["AddressBook"]["1"] = "person";
   }
   function person($offset)
   {
@@ -126,13 +155,21 @@ class AddressBook extends PBMessage
   {
     $this->_set_arr_value("1", $index, $value);
   }
+  function set_all_persons($values)
+  {
+    return $this->_set_arr_values("1", $values);
+  }
   function remove_last_person()
   {
     $this->_remove_last_arr_value("1");
   }
-  function person_size()
+  function persons_size()
   {
     return $this->_get_arr_size("1");
+  }
+  function get_persons()
+  {
+    return $this->_get_value("1");
   }
 }
 class Test extends PBMessage
@@ -141,8 +178,9 @@ class Test extends PBMessage
   public function __construct($reader=null)
   {
     parent::__construct($reader);
-    $this->fields["2"] = "PBString";
+    self::$fields["Test"]["2"] = "PBString";
     $this->values["2"] = array();
+    self::$fieldNames["Test"]["2"] = "person";
   }
   function person($offset)
   {
@@ -156,7 +194,7 @@ class Test extends PBMessage
   }
   function set_person($index, $value)
   {
-    $v = new $this->fields["2"]();
+    $v = new self::$fields["Test"]["2"]();
     $v->set_value($value);
     $this->_set_arr_value("2", $index, $v);
   }
@@ -164,9 +202,13 @@ class Test extends PBMessage
   {
     $this->_remove_last_arr_value("2");
   }
-  function person_size()
+  function persons_size()
   {
     return $this->_get_arr_size("2");
+  }
+  function get_persons()
+  {
+    return $this->_get_value("2");
   }
 }
 ?>

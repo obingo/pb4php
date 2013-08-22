@@ -2,7 +2,7 @@
 /**
  * @author Nikolai Kordulla
  */
-class PBSignedInt extends PBScalar
+class PBSignedInt extends PBInt
 {
 	var $wired_type = PBMessage::WIRED_VARINT;
 
@@ -20,7 +20,7 @@ class PBSignedInt extends PBScalar
 		if ($saved % 2 == 1)
 		{
 			$this->value = -($this->value);
-		}
+		}				
 	}
 
 	/**
