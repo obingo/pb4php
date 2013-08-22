@@ -206,16 +206,6 @@ class Entry_Assign extends PBMessage
     $v = $this->_add_arr_value("1");
     $v->set_value($value);
   }
-  function set_nottake($index, $value)
-  {
-    $v = new $this->fields["1"]();
-    $v->set_value($value);
-    $this->_set_arr_value("1", $index, $v);
-  }
-  function remove_last_nottake()
-  {
-    $this->_remove_last_arr_value("1");
-  }
   function nottake_size()
   {
     return $this->_get_arr_size("1");
@@ -229,16 +219,6 @@ class Entry_Assign extends PBMessage
   {
     $v = $this->_add_arr_value("2");
     $v->set_value($value);
-  }
-  function set_take($index, $value)
-  {
-    $v = new $this->fields["2"]();
-    $v->set_value($value);
-    $this->_set_arr_value("2", $index, $v);
-  }
-  function remove_last_take()
-  {
-    $this->_remove_last_arr_value("2");
   }
   function take_size()
   {

@@ -21,6 +21,8 @@ class PBBytes extends PBScalar
 		$pointer = $this->reader->get_pointer();
 		$this->reader->add_pointer($length);
 		$this->value = $this->reader->get_message_from($pointer);
+		
+		$this->clean();
 	}
 
 	/**
@@ -39,6 +41,14 @@ class PBBytes extends PBScalar
 		$string .= $this->value;
 
 		return $string;
+	}
+	
+	public function toJson($fieldName = "")
+	{		
+		if ($fieldName == "")
+			return  '"[BLOB] (' . strlen($this->value) . ' bytes)"';
+		else
+			return  '"' . $fieldName . '": "[BLOB] (' . strlen($this->value) . ' bytes)"';
 	}
 }
 ?>
